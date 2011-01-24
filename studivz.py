@@ -150,6 +150,7 @@ def get_photo_album_ids(soup):
 
 class LoginException(Exception): pass
 class DataException(Exception): pass
+class CaptchaException(Exception): pass
 
 class StudiVZ:
     host = "http://www.studivz.net"
@@ -208,6 +209,8 @@ class StudiVZ:
         if no_soup:
             return res
         soup = BeautifulSoup(clean_webpage(res))
+				if not soup:
+					raise CaptchaException()
         self.last_res = (res, soup)
         return res, soup
 
