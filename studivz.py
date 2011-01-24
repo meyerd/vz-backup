@@ -209,8 +209,16 @@ class StudiVZ:
         if no_soup:
             return res
         soup = BeautifulSoup(clean_webpage(res))
-				if not soup:
-					raise CaptchaException()
+        if str(soup).find("Sicherheits-Abfrage") > 0:
+            # try one more time then give up
+            print "Captcha detected retrying in 5 seconds ..."
+            time.sleep(5)
+            res = self.br.open(self.host + "/" + args).read()
+            self.zip.writestr(args, res)
+
+            soup = BeautifulSoup(clean_webpage(res))
+            if str(soup).find("Sicherheits-Abfrage") > 0:
+                raise CaptchaException()
         self.last_res = (res, soup)
         return res, soup
 
